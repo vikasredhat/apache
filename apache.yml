@@ -1,0 +1,34 @@
+---
+- name: apache pkg install latest version
+  hosts: node2
+  become: true
+  tasks:
+    - name: httpd pkg install
+      yum:
+        name: httpd
+        state: latest
+    - name: apache service start
+      service:
+        name: httpd
+        state: started
+        enabled: true
+    - name: setting up apache server
+      template:
+        src: /root/ansible/session-22/index.j2
+        dest: /var/www/html/index.html
+    - name: restarted apache server
+      service:
+        name: httpd
+        state: restarted
+    - name: httpd service add on firewall
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+    - name: firewall reloaded
+      service: 
+        name: firewalld
+        state: reloaded
+
+
+
